@@ -38,3 +38,4 @@ Thumbs.db
 *.ap_
 *.aar
 
+gradle/wrapper/gradle-wrapper.jar
