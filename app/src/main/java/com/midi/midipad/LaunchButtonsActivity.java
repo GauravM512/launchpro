@@ -629,14 +629,16 @@ public class LaunchButtonsActivity extends Activity implements View.OnTouchListe
         }
         int velocity = press ? 127 : 0;
         try {
-            if (isLaunchpadGridTag(tag)) {
-                sendMidiB(new byte[]{(byte) (press ? 144 : 128), (byte) tag, (byte) velocity});
-                return true;
-            }
             if (isLaunchpadEdgeCcTag(tag)) {
                 sendMidiB(new byte[]{-80, (byte) tag, (byte) velocity});
                 return true;
             }
+            
+            if (isLaunchpadGridTag(tag)) {
+                sendMidiB(new byte[]{(byte) (press ? 144 : 128), (byte) tag, (byte) velocity});
+                return true;
+            }
+            
         } catch (Exception e) {
             e.printStackTrace();
         }
