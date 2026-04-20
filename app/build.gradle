@@ -4,12 +4,12 @@ plugins {
 
 android {
 	namespace "de.bassapps.launchbuttonsP"
-    compileSdkVersion 34
+    compileSdk 34
 
     defaultConfig {
         applicationId 'de.bassapps.launchbuttonsP.dev'
-        minSdkVersion 23
-        targetSdkVersion 34
+        minSdk 23
+        targetSdk 34
         versionCode 16
         versionName "2.0172"
 
@@ -24,11 +24,11 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
 
-    lintOptions {
+    lint {
         abortOnError false
     }
 
@@ -36,16 +36,6 @@ android {
         buildConfig = false
     }
 
-    sourceSets {
-        main {
-            java {
-                srcDirs = ['src/main/java/de/bassapps']
-                exclude '**/R.java'
-                exclude '**/R$*.java'
-                exclude '**/BuildConfig.java'
-            }
-        }
-    }
 }
 
 dependencies {
