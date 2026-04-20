@@ -1,0 +1,40 @@
+# Gradle
+.gradle/
+build/
+**/build/
+
+# Local config
+local.properties
+*.keystore
+*.jks
+*.p12
+*.pem
+
+# Android/IntelliJ
+.idea/
+*.iml
+*.ipr
+*.iws
+captures/
+.externalNativeBuild/
+.cxx/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Kotlin/Java compiled artifacts
+*.class
+
+# VS Code
+.vscode/
+
+# Android packaging artifacts (do not track binaries)
+*.apk
+*.aab
+*.ap_
+*.aar
+
