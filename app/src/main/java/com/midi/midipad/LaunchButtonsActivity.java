@@ -1326,10 +1326,10 @@ public class LaunchButtonsActivity extends Activity implements View.OnTouchListe
                 TextView tv = (TextView) LaunchButtonsActivity.this.findViewById(R.id.TextView01);
                 if (tv != null) {
                     if (ok) {
-                        tv.setText("Tx OK: " + LaunchButtonsActivity.this.txOkCount + " | Fail: " + LaunchButtonsActivity.this.txFailCount);
+                        tv.setText("Output OK: " + LaunchButtonsActivity.this.txOkCount + " | Fail: " + LaunchButtonsActivity.this.txFailCount);
                     } else {
                         String reason = error == null ? "unknown" : error.getClass().getSimpleName();
-                        tv.setText("Tx FAIL (" + reason + ") | OK: " + LaunchButtonsActivity.this.txOkCount + " Fail: " + LaunchButtonsActivity.this.txFailCount);
+                        tv.setText("Output FAIL (" + reason + ") | OK: " + LaunchButtonsActivity.this.txOkCount + " Fail: " + LaunchButtonsActivity.this.txFailCount);
                     }
                 }
             }
@@ -1379,15 +1379,15 @@ public class LaunchButtonsActivity extends Activity implements View.OnTouchListe
         boolean tx = this.usbMidiBridge.canSend() || serviceTxReady;
         boolean rx = this.usbMidiBridge.canReceive();
         if (!tx) {
-            return "MIDI open failed (no Tx endpoint)";
+            return "MIDI open failed (no Output endpoint)";
         }
         if (tx && rx) {
-            return "Connected (Tx/Rx)";
+            return "Connected (Input/Output)";
         }
         if (tx) {
-            return "Connected (Tx only)";
+            return "Connected (Output only)";
         }
-        return rx ? "Connected (Rx only - open host output for Tx)" : "Connected";
+        return rx ? "Connected (Input only - open host output for Output)" : "Connected";
     }
 
     private String bytesToHex(byte[] data) {
