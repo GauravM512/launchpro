@@ -40,8 +40,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-/* JADX INFO: loaded from: classes.dex */
-public class launchButtons extends Activity implements View.OnTouchListener, MidiPacketListener {
+public class LaunchButtonsActivity extends Activity implements View.OnTouchListener, MidiPacketListener {
     private static final String TAG = "LaunchPlus";
     private static final String TAG_MIDI_IN = "MIDI_IN";
     private static final String TAG_MIDI_OUT = "MIDI_OUT";
@@ -105,7 +104,7 @@ public class launchButtons extends Activity implements View.OnTouchListener, Mid
     boolean[] transporttoogle = new boolean[5];
     int knob_open = 0;
     int[][] blinks = (int[][]) Array.newInstance((Class<?>) Integer.TYPE, 30, 30);
-    SenderB sBB = new SenderB();
+    MidiSendWorker sBB = new MidiSendWorker();
     int bbb = 0;
     int alpha = -14671840;
     Drawable mask = Drawable.createFromPath("@drawable/but");
@@ -117,10 +116,10 @@ public class launchButtons extends Activity implements View.OnTouchListener, Mid
     private final LaunchpadMidiDeviceService.MidiEventListener serviceMidiListener = new LaunchpadMidiDeviceService.MidiEventListener() {
         @Override
         public void onMidiPacket(final byte[] data, final long timestamp) {
-            launchButtons.this.mHandler.post(new Runnable() {
+            LaunchButtonsActivity.this.mHandler.post(new Runnable() {
                 @Override
                 public void run() {
-                    launchButtons.this.onMidiPacket(data, timestamp);
+                    LaunchButtonsActivity.this.onMidiPacket(data, timestamp);
                 }
             });
         }
@@ -150,7 +149,6 @@ public class launchButtons extends Activity implements View.OnTouchListener, Mid
         createButtons();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
     public void buildUI() {
         final Button button = (Button) findViewById(R.id.Button01);
         this.spinner = (Spinner) findViewById(R.id.Spinner01);
@@ -167,14 +165,14 @@ public class launchButtons extends Activity implements View.OnTouchListener, Mid
         this.spinner.setAdapter((SpinnerAdapter) adapter);
         button.setEnabled(outputs.length > 0);
 
-        this.spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() { // from class: de.bassapps.launchbuttonsP.launchButtons.2
+        this.spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override // android.widget.AdapterView.OnItemSelectedListener
             public void onItemSelected(AdapterView<?> parent, View view, final int position, long id) {
-                if (position != launchButtons.this.lastPosition && outputs.length > 0) {
-                    launchButtons.this.lastPosition = position;
-                    boolean connected = launchButtons.this.usbMidiBridge.openOutputByIndex(position);
-                    launchButtons.this.sBB.midiOut = launchButtons.this.usbMidiBridge;
-                    ((TextView) launchButtons.this.findViewById(R.id.TextView01)).setText(launchButtons.this.connectionStateText(connected));
+                if (position != LaunchButtonsActivity.this.lastPosition && outputs.length > 0) {
+                    LaunchButtonsActivity.this.lastPosition = position;
+                    boolean connected = LaunchButtonsActivity.this.usbMidiBridge.openOutputByIndex(position);
+                    LaunchButtonsActivity.this.sBB.midiOut = LaunchButtonsActivity.this.usbMidiBridge;
+                    ((TextView) LaunchButtonsActivity.this.findViewById(R.id.TextView01)).setText(LaunchButtonsActivity.this.connectionStateText(connected));
                     button.setEnabled(connected);
                 }
             }
@@ -193,16 +191,16 @@ public class launchButtons extends Activity implements View.OnTouchListener, Mid
             ((TextView) findViewById(R.id.TextView01)).setText(connectionStateText(connected));
         }
 
-        button.setOnTouchListener(new View.OnTouchListener() { // from class: de.bassapps.launchbuttonsP.launchButtons.3
+        button.setOnTouchListener(new View.OnTouchListener() {
             @Override // android.view.View.OnTouchListener
             public boolean onTouch(View v, MotionEvent me) {
                 try {
                     if (me.getAction() == 0) {
-                        launchButtons.this.myNote[2] = 100;
-                        launchButtons.this.sendMidiNew(launchButtons.this.myNote);
+                        LaunchButtonsActivity.this.myNote[2] = 100;
+                        LaunchButtonsActivity.this.sendMidiNew(LaunchButtonsActivity.this.myNote);
                     } else if (me.getAction() == 1) {
-                        launchButtons.this.myNote[2] = 0;
-                        launchButtons.this.sendMidiNew(launchButtons.this.myNote);
+                        LaunchButtonsActivity.this.myNote[2] = 0;
+                        LaunchButtonsActivity.this.sendMidiNew(LaunchButtonsActivity.this.myNote);
                     }
                 } catch (Exception ex) {
                     ex.printStackTrace();
@@ -232,7 +230,7 @@ public class launchButtons extends Activity implements View.OnTouchListener, Mid
             size = this.height / 9;
             small = true;
         }
-        System.out.println("aaaaaa " + size);
+        Log.d(TAG, String.valueOf("aaaaaa " + size));
         TableLayout layout = new TableLayout(this);
         layout.setLayoutParams(new TableLayout.LayoutParams(40000, 40000));
         layout.setPadding(1, 1, 1, 1);
@@ -313,12 +311,12 @@ public class launchButtons extends Activity implements View.OnTouchListener, Mid
                     this.but[12][y].setBackgroundColor(-65536);
                     this.but[12][y].setScaleType(ImageView.ScaleType.CENTER_CROP);
                     this.but[12][y].setPadding(0, 0, 0, 0);
-                    System.out.println("x" + x + "y" + y);
+                    Log.d(TAG, String.valueOf("x" + x + "y" + y));
                     tr.addView(this.but[12][y], size, size);
                     if (y == 7) {
                         transportTag++;
                         this.but[13][y] = new ImageButton(this);
-                        System.out.println("1234");
+                        Log.d(TAG, String.valueOf("1234"));
                         this.but[13][y].setBackgroundColor(-52225);
                         this.but[13][y].setImageResource(R.drawable.info);
                         this.but[13][y].setTag(Integer.valueOf(transportTag));
@@ -394,7 +392,7 @@ public class launchButtons extends Activity implements View.OnTouchListener, Mid
                 ViewGroup.LayoutParams kek = this.knobs[x][y].getLayoutParams();
                 ((ViewGroup.MarginLayoutParams) kek).setMargins(this.width / 100, 0, 0, 0);
                 this.knobs[x][y].setLayoutParams(kek);
-                this.knobs[x][y].SetListener(new RoundKnobButton.RoundKnobButtonListener() { // from class: de.bassapps.launchbuttonsP.launchButtons.4
+                this.knobs[x][y].SetListener(new RoundKnobButton.RoundKnobButtonListener() {
                     @Override // de.bassapps.launchbuttonsP.RoundKnobButton.RoundKnobButtonListener
                     public void onStateChange(boolean newstate) {
                     }
@@ -402,8 +400,8 @@ public class launchButtons extends Activity implements View.OnTouchListener, Mid
                     @Override // de.bassapps.launchbuttonsP.RoundKnobButton.RoundKnobButtonListener
                     public void onRotate(RoundKnobButton roundKnobButton, int percentage, int ID) {
                         try {
-                            System.out.println("local" + ID);
-                            launchButtons.this.sendMidiB(new byte[]{-80, (byte) ID, (byte) percentage});
+                            Log.d(TAG, String.valueOf("local" + ID));
+                            LaunchButtonsActivity.this.sendMidiB(new byte[]{-80, (byte) ID, (byte) percentage});
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -426,11 +424,11 @@ public class launchButtons extends Activity implements View.OnTouchListener, Mid
             return true;
         }
         if (action == MotionEvent.ACTION_DOWN || action == MotionEvent.ACTION_POINTER_DOWN) {
-            System.out.println(tag);
-            System.out.println("tag   " + tag);
+            Log.d(TAG, String.valueOf(tag));
+            Log.d(TAG, String.valueOf("tag   " + tag));
             byte tagb = (byte) tag;
             if ((tag < 10 || ((tag > 90 && tag < 300) || tag % 10 == 0 || tag % 10 == 9)) && tag != 300) {
-                System.out.println("ye" + this.mode + " " + tag);
+                Log.d(TAG, String.valueOf("ye" + this.mode + " " + tag));
                 try {
                     if (this.mode == 0) {
                         sendMidiB(new byte[]{-80, tagb, 127});
@@ -486,14 +484,14 @@ public class launchButtons extends Activity implements View.OnTouchListener, Mid
                     }
                     try {
                         sendMidiB(new byte[]{-112, (byte) toSend4, 127});
-                        System.out.println("aaaaaaa");
+                        Log.d(TAG, String.valueOf("aaaaaaa"));
                     } catch (Exception e13) {
                         e13.printStackTrace();
                     }
                 } else {
                     try {
                         sendMidiB(new byte[]{-112, tagb, 127});
-                        System.out.println("aaaaaaa");
+                        Log.d(TAG, String.valueOf("aaaaaaa"));
                     } catch (Exception e14) {
                         e14.printStackTrace();
                     }
@@ -511,7 +509,7 @@ public class launchButtons extends Activity implements View.OnTouchListener, Mid
                     e.printStackTrace();
                 }
             } else if (tag == 300) {
-                System.out.println("300 ye");
+                Log.d(TAG, String.valueOf("300 ye"));
                 if (!this.knobs_built) {
                     makeKnobs();
                 }
@@ -522,7 +520,7 @@ public class launchButtons extends Activity implements View.OnTouchListener, Mid
                 initiatePopupWindow();
             } else if (tag > 299 && tag < 600) {
                 byte tagb2 = (byte) (tagb - 207);
-                System.out.println("tagb " + ((int) tagb2));
+                Log.d(TAG, String.valueOf("tagb " + ((int) tagb2)));
                 try {
                     if (tagb2 >= 95) {
                         if (!this.transporttoogle[tagb2 - 95]) {
@@ -554,7 +552,7 @@ public class launchButtons extends Activity implements View.OnTouchListener, Mid
         if (action == MotionEvent.ACTION_UP || action == MotionEvent.ACTION_POINTER_UP || action == MotionEvent.ACTION_CANCEL) {
             int tag2 = tag;
             if (tag2 < 10 || ((tag2 > 90 && tag2 < 300) || tag2 % 10 == 0 || tag2 % 10 == 9)) {
-                System.out.println("UP first if");
+                Log.d(TAG, String.valueOf("UP first if"));
                 try {
                     if (this.mode == 0) {
                         sendMidiB(new byte[]{-80, (byte) tag2, 0});
@@ -636,11 +634,11 @@ public class launchButtons extends Activity implements View.OnTouchListener, Mid
         if (v == this.Quit) {
             moveTaskToBack(true);
             Handler exitHandler = new Handler();
-            exitHandler.postDelayed(new Runnable() { // from class: de.bassapps.launchbuttonsP.launchButtons.5
+            exitHandler.postDelayed(new Runnable() {
                 @Override // java.lang.Runnable
                 public void run() {
                     try {
-                        launchButtons.this.sendMidiB(new byte[]{6, 6, 6});
+                        LaunchButtonsActivity.this.sendMidiB(new byte[]{6, 6, 6});
                     } catch (Exception e2) {
                         e2.printStackTrace();
                     }
@@ -769,7 +767,7 @@ public class launchButtons extends Activity implements View.OnTouchListener, Mid
     }
 
     public void initiateFirstWindow() {
-        System.out.println("kekekeke111");
+        Log.d(TAG, String.valueOf("kekekeke111"));
         if (!this.fOpen) {
             try {
                 LayoutInflater inflater = (LayoutInflater) getSystemService("layout_inflater");
@@ -807,8 +805,8 @@ public class launchButtons extends Activity implements View.OnTouchListener, Mid
             this.mHandler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    if (!launchButtons.this.isFinishing() && launchButtons.this.spinner != null) {
-                        launchButtons.this.rest();
+                    if (!LaunchButtonsActivity.this.isFinishing() && LaunchButtonsActivity.this.spinner != null) {
+                        LaunchButtonsActivity.this.rest();
                     }
                 }
             }, 300L);
@@ -837,17 +835,17 @@ public class launchButtons extends Activity implements View.OnTouchListener, Mid
     }
 
     private void midiSystemLoad(final Context ctx) {
-        AsyncTask at = new AsyncTask() { // from class: de.bassapps.launchbuttonsP.launchButtons.6
+        AsyncTask at = new AsyncTask() {
             @Override // android.os.AsyncTask
             protected Object doInBackground(Object... params) {
-                launchButtons.this.usbMidiBridge = new UsbMidiBridge(ctx);
-                launchButtons.this.usbMidiBridge.setPacketListener(launchButtons.this);
-                return launchButtons.this.usbMidiBridge;
+                LaunchButtonsActivity.this.usbMidiBridge = new UsbMidiBridge(ctx);
+                LaunchButtonsActivity.this.usbMidiBridge.setPacketListener(LaunchButtonsActivity.this);
+                return LaunchButtonsActivity.this.usbMidiBridge;
             }
 
             @Override // android.os.AsyncTask
             protected void onPostExecute(Object result) {
-                launchButtons.this.buildUI();
+                LaunchButtonsActivity.this.buildUI();
             }
 
             protected void onProgressUpdate(Integer... prg) {
@@ -877,10 +875,10 @@ public class launchButtons extends Activity implements View.OnTouchListener, Mid
         for (int i = 0; i < data.length; i++) {
         }
         if (data.length >= 6 && data[0] == -16 && data[1] == 126 && data[2] == 127 && data[3] == 6 && data[4] == 1 && data[5] == -9) {
-            System.out.println("REQUEST");
-            System.out.println("REQUEST");
-            System.out.println("REQUEST");
-            System.out.println("REQUEST");
+            Log.d(TAG, String.valueOf("REQUEST"));
+            Log.d(TAG, String.valueOf("REQUEST"));
+            Log.d(TAG, String.valueOf("REQUEST"));
+            Log.d(TAG, String.valueOf("REQUEST"));
             handshake(0);
         }
         if (data.length >= 12 && data[0] == -16 && data[1] == 0 && data[2] == 32 && data[3] == 41 && data[4] == 2 && data[5] == 16 && data[6] == 64 && data[7] == 0 && data[8] == 0 && data[9] == 0 && data[10] == 0 && data[11] == -9) {
@@ -895,47 +893,47 @@ public class launchButtons extends Activity implements View.OnTouchListener, Mid
             }
         }
         if (data.length >= 10 && data[0] == -16 && data[1] == 0 && data[2] == 32 && data[3] == 41 && data[4] == 2 && data[5] == 16) {
-            System.out.println("MODE CHANGE");
+            Log.d(TAG, String.valueOf("MODE CHANGE"));
             if (data[6] == 44 && data[7] == 1) {
-                System.out.println(this.mode + "d");
+                Log.d(TAG, String.valueOf(this.mode + "d"));
                 this.mode = 0;
-                System.out.println(this.mode + "z");
+                Log.d(TAG, String.valueOf(this.mode + "z"));
             }
             if (data[6] == 34 && data[7] == 3) {
                 this.mode = 1;
                 userMode(0);
-                System.out.println("MODE 1");
+                Log.d(TAG, String.valueOf("MODE 1"));
                 resetButtons(this.mode);
             }
             if (data[6] == 46 && data[7] == 0) {
                 this.mode = 1;
                 userMode(0);
-                System.out.println("MODE 1");
+                Log.d(TAG, String.valueOf("MODE 1"));
                 resetButtons(this.mode);
             }
             if (data[6] == 34 && data[7] == 0) {
                 this.mode = 0;
-                System.out.println("MODE NUL normal");
+                Log.d(TAG, String.valueOf("MODE NUL normal"));
             }
             if (data[6] == 43 && data[7] == 1 && data[8] == 0 && data[9] == 21) {
                 this.mode = 5;
-                System.out.println("MODE VOL volume1");
+                Log.d(TAG, String.valueOf("MODE VOL volume1"));
             }
             if (data[6] == 43 && data[7] == 0) {
                 if (data[8] == 0 && data[9] == 21) {
                     this.mode = 5;
                     resetButtons(this.mode);
-                    System.out.println("MODE VOL volume2");
+                    Log.d(TAG, String.valueOf("MODE VOL volume2"));
                 }
                 if (data[8] == 1 && data[9] == 9) {
                     this.mode = 6;
                     resetButtons(this.mode);
-                    System.out.println("MODE PAN panning");
+                    Log.d(TAG, String.valueOf("MODE PAN panning"));
                 }
                 if (data[8] == 0 && data[9] < 50 && data[9] % 4 == 1 && data[9] != 21 && data[9] != 25) {
                     this.mode = 7;
                     resetButtons(this.mode);
-                    System.out.println("array mode");
+                    Log.d(TAG, String.valueOf("array mode"));
                     switch (data[9]) {
                         case 5:
                             this.sends = 0;
@@ -967,10 +965,10 @@ public class launchButtons extends Activity implements View.OnTouchListener, Mid
                         color = Color.HSVToColor(new float[]{59.976f, 1.0f, 1.0f});
                     }
                     final int c = color;
-                    this.mHandler.post(new Runnable() { // from class: de.bassapps.launchbuttonsP.launchButtons.7
+                    this.mHandler.post(new Runnable() {
                         @Override // java.lang.Runnable
                         public void run() {
-                            launchButtons.this.but[9][7 - launchButtons.this.sends].setBackgroundColor(c);
+                            LaunchButtonsActivity.this.but[9][7 - LaunchButtonsActivity.this.sends].setBackgroundColor(c);
                         }
                     });
                 }
@@ -1078,7 +1076,7 @@ public class launchButtons extends Activity implements View.OnTouchListener, Mid
         switch (stage) {
             case 0:
                 try {
-                    System.out.println("handshake 0");
+                    Log.d(TAG, String.valueOf("handshake 0"));
                     sendMidiB(new byte[]{-16, 126, 0, 6, 2, 0, 32, 41, 81, 0, 0, 0, 0, 1, 5, 4, -9});
                 } catch (Exception e1) {
                     e1.printStackTrace();
@@ -1087,7 +1085,7 @@ public class launchButtons extends Activity implements View.OnTouchListener, Mid
                 break;
             case 1:
                 try {
-                    System.out.println("handshake 1");
+                    Log.d(TAG, String.valueOf("handshake 1"));
                     sendMidiB(new byte[]{-16, 0, 32, 41, 2, 16, 64, 47, 72, -9});
                     sendMidiB(new byte[]{-16, 0, 32, 41, 2, 16, 45, 0, -9});
                     sendMidiB(new byte[]{-16, 0, 32, 41, 2, 16, 46, 0, -9});
@@ -1098,7 +1096,7 @@ public class launchButtons extends Activity implements View.OnTouchListener, Mid
                 break;
             case 2:
                 try {
-                    System.out.println("handshake 0");
+                    Log.d(TAG, String.valueOf("handshake 0"));
                     sendMidiB(new byte[]{-16, 0, 32, 41, 2, 16, 45, 0, -9});
                 } catch (Exception e13) {
                     e13.printStackTrace();
@@ -1143,7 +1141,7 @@ public class launchButtons extends Activity implements View.OnTouchListener, Mid
             }
         }
         if (this.mode == 0) {
-            System.out.println("mod0    s");
+            Log.d(TAG, String.valueOf("mod0    s"));
             if (hi == 176) {
                 if (n > 90) {
                     setButtonBackground(10, n - 91, c);
@@ -1153,11 +1151,11 @@ public class launchButtons extends Activity implements View.OnTouchListener, Mid
                     setButtonBackground(x, y, c);
                 }
             }
-            System.out.println("mod1    s");
+            Log.d(TAG, String.valueOf("mod1    s"));
             if (hi == 144 && c > 0 && x < 12 && y < 12 && x >= 0 && y >= 0) {
                 setButtonBackground(x, y, c);
             }
-            System.out.println("mod2    s");
+            Log.d(TAG, String.valueOf("mod2    s"));
             if (x > 0 && y > 0) {
                 if (hi == 144 && channel == 1) {
                     this.blinks[x][y] = 1;
@@ -1228,10 +1226,10 @@ public class launchButtons extends Activity implements View.OnTouchListener, Mid
         }
         final int c = color;
         cacheButtonColor(x, y, c);
-        this.mHandler.post(new Runnable() { // from class: de.bassapps.launchbuttonsP.launchButtons.10
+        this.mHandler.post(new Runnable() {
             @Override // java.lang.Runnable
             public void run() {
-                launchButtons.this.but[x][y].setBackgroundColor(c);
+                LaunchButtonsActivity.this.but[x][y].setBackgroundColor(c);
             }
         });
     }
@@ -1289,7 +1287,7 @@ public class launchButtons extends Activity implements View.OnTouchListener, Mid
                     this.tv.setText(this.sb.toString());
                     break;
                 case 1:
-                    launchButtons.this.findViewById(R.id.Button01).setEnabled(false);
+                    LaunchButtonsActivity.this.findViewById(R.id.Button01).setEnabled(false);
                     break;
             }
         }
@@ -1395,17 +1393,17 @@ public class launchButtons extends Activity implements View.OnTouchListener, Mid
             @Override
             public void run() {
                 if (ok) {
-                    launchButtons.this.txOkCount++;
+                    LaunchButtonsActivity.this.txOkCount++;
                 } else {
-                    launchButtons.this.txFailCount++;
+                    LaunchButtonsActivity.this.txFailCount++;
                 }
-                TextView tv = (TextView) launchButtons.this.findViewById(R.id.TextView01);
+                TextView tv = (TextView) LaunchButtonsActivity.this.findViewById(R.id.TextView01);
                 if (tv != null) {
                     if (ok) {
-                        tv.setText("Tx OK: " + launchButtons.this.txOkCount + " | Fail: " + launchButtons.this.txFailCount);
+                        tv.setText("Tx OK: " + LaunchButtonsActivity.this.txOkCount + " | Fail: " + LaunchButtonsActivity.this.txFailCount);
                     } else {
                         String reason = error == null ? "unknown" : error.getClass().getSimpleName();
-                        tv.setText("Tx FAIL (" + reason + ") | OK: " + launchButtons.this.txOkCount + " Fail: " + launchButtons.this.txFailCount);
+                        tv.setText("Tx FAIL (" + reason + ") | OK: " + LaunchButtonsActivity.this.txOkCount + " Fail: " + LaunchButtonsActivity.this.txFailCount);
                     }
                 }
             }
@@ -1488,8 +1486,8 @@ public class launchButtons extends Activity implements View.OnTouchListener, Mid
         this.mHandler.post(new Runnable() {
             @Override
             public void run() {
-                if (launchButtons.this.but[x][y] != null) {
-                    launchButtons.this.but[x][y].setBackgroundColor(color);
+                if (LaunchButtonsActivity.this.but[x][y] != null) {
+                    LaunchButtonsActivity.this.but[x][y].setBackgroundColor(color);
                 }
             }
         });

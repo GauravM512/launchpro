@@ -1,6 +1,5 @@
 package de.bassapps.launchbuttonsP;
 
-/* JADX INFO: loaded from: classes.dex */
 public class Calcs {
     public int d() {
         return 3;

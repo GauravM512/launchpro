@@ -1,6 +1,5 @@
 package de.bassapps.launchbuttonsP;
 
-/* JADX INFO: loaded from: classes.dex */
 public class Colors {
     // Keep index 0 as the app's current dark-off color.
     private static final int COLOR_0_LEGACY = 0xFF363636;

@@ -9,14 +9,15 @@ import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.RectF;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
-/* JADX INFO: loaded from: classes.dex */
 public class RoundKnobButton extends RelativeLayout implements GestureDetector.OnGestureListener {
+    private static final String TAG = "RoundKnobButton";
     int Mode;
     int[] Values;
     int arcColor;
@@ -102,7 +103,7 @@ public class RoundKnobButton extends RelativeLayout implements GestureDetector.O
         setBackgroundColor(10044450);
         this.contextd = context;
         this.knob_ID = id;
-        System.out.println(id);
+        Log.d(TAG, "init knobId=" + id);
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inSampleSize = 8;
         this.srcon = BitmapFactory.decodeResource(this.contextd.getResources(), R.drawable.rotor, options);
@@ -120,11 +121,11 @@ public class RoundKnobButton extends RelativeLayout implements GestureDetector.O
         this.paintCenter = new Paint();
         this.paintCenter = this.paint;
         this.gestureDetector = new GestureDetector(getContext(), this);
-        setOnTouchListener(new View.OnTouchListener() { // from class: de.bassapps.launchbuttonsP.RoundKnobButton.1
+        setOnTouchListener(new View.OnTouchListener() {
             @Override // android.view.View.OnTouchListener
             public boolean onTouch(View arg0, MotionEvent arg1) {
                 if (arg1.getAction() == 0) {
-                    System.out.println("wixxxxer");
+                    Log.d(TAG, "double-tap candidate");
                     RoundKnobButton.this.doubleClick();
                     return false;
                 }

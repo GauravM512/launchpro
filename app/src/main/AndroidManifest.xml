@@ -21,7 +21,7 @@
         android:icon="@mipmap/ic_launcher">
         <activity
             android:label="@string/app_name"
-            android:name="de.bassapps.launchbuttonsP.launchButtons"
+            android:name="de.bassapps.launchbuttonsP.LaunchButtonsActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>

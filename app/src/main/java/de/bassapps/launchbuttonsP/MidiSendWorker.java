@@ -1,14 +1,14 @@
 package de.bassapps.launchbuttonsP;
-import java.util.Arrays;
+import android.util.Log;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
-/* JADX INFO: loaded from: classes.dex */
-class SenderB extends Thread {
+class MidiSendWorker extends Thread {
+    private static final String TAG = "MidiSendWorker";
     MidiByteSender midiOut;
     private BlockingQueue<byte[]> notesToLog = new ArrayBlockingQueue(600);
 
-    SenderB() {
+    MidiSendWorker() {
     }
 
     synchronized void setData(byte[] d) {
@@ -43,6 +43,6 @@ class SenderB extends Thread {
     }
 
     public void systemError(int channel, int err, String description) {
-        System.out.println("HHHHHHHHHHHHHH");
+        Log.w(TAG, "systemError ch=" + channel + " err=" + err + " desc=" + description);
     }
 }
