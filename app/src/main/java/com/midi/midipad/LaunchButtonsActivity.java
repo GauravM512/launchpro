@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -761,23 +760,17 @@ public class LaunchButtonsActivity extends Activity implements View.OnTouchListe
     }
 
     private void midiSystemLoad(final Context ctx) {
-        AsyncTask at = new AsyncTask() {
-            @Override // android.os.AsyncTask
-            protected Object doInBackground(Object... params) {
-                LaunchButtonsActivity.this.usbMidiBridge = new UsbMidiBridge(ctx);
-                LaunchButtonsActivity.this.usbMidiBridge.setPacketListener(LaunchButtonsActivity.this);
-                return LaunchButtonsActivity.this.usbMidiBridge;
-            }
-
-            @Override // android.os.AsyncTask
-            protected void onPostExecute(Object result) {
-                LaunchButtonsActivity.this.buildUI();
-            }
-
-            protected void onProgressUpdate(Integer... prg) {
-            }
-        };
-        at.execute(new Object[1]);
+        final Context appContext = ctx.getApplicationContext();
+        java.util.concurrent.Executors.newSingleThreadExecutor().execute(() -> {
+            final UsbMidiBridge bridge = new UsbMidiBridge(appContext);
+            bridge.setPacketListener(LaunchButtonsActivity.this);
+            this.mHandler.post(() -> {
+                if (!isFinishing() && !isDestroyed()) {
+                    this.usbMidiBridge = bridge;
+                    this.buildUI();
+                }
+            });
+        });
     }
 
     public void midiReceived2(int channel, int ssrc, byte[] data, long timestamp) {
