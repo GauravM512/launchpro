@@ -1,4 +1,4 @@
-package de.bassapps.launchbuttonsP;
+package com.midi.midipad;
 
 import android.media.midi.MidiDeviceService;
 import android.media.midi.MidiReceiver;

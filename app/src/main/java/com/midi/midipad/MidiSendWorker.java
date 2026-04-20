@@ -1,4 +1,4 @@
-package de.bassapps.launchbuttonsP;
+package com.midi.midipad;
 import android.util.Log;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;

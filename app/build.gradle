@@ -3,11 +3,11 @@ plugins {
 }
 
 android {
-	namespace "de.bassapps.launchbuttonsP"
+    namespace "com.midi.midipad"
     compileSdk 34
 
     defaultConfig {
-        applicationId 'de.bassapps.launchbuttonsP.dev'
+        applicationId 'com.midi.midipad'
         minSdk 23
         targetSdk 34
         versionCode 16

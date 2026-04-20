@@ -1,4 +1,4 @@
-package de.bassapps.launchbuttonsP;
+package com.midi.midipad;
 
 public class Calcs {
     public int d() {

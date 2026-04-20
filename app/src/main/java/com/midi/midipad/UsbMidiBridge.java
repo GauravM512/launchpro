@@ -1,4 +1,4 @@
-package de.bassapps.launchbuttonsP;
+package com.midi.midipad;
 
 import android.content.Context;
 import android.media.midi.MidiDevice;
@@ -589,7 +589,8 @@ final class UsbMidiBridge implements MidiByteSender {
         String product = info.getProperties().getString(MidiDeviceInfo.PROPERTY_PRODUCT);
         String name = info.getProperties().getString(MidiDeviceInfo.PROPERTY_NAME);
 
-        boolean oursByMeta = "BassApps".equalsIgnoreCase(safe(manufacturer))
+        boolean oursByMeta = ("BassApps".equalsIgnoreCase(safe(manufacturer))
+            || "Gaurav".equalsIgnoreCase(safe(manufacturer)))
                 && ("LaunchButtons".equalsIgnoreCase(safe(product))
                 || "LaunchButtons".equalsIgnoreCase(safe(name)));
         if (oursByMeta) {

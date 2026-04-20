@@ -1,4 +1,4 @@
-package de.bassapps.launchbuttonsP;
+package com.midi.midipad;
 
 public class Colors {
     // Keep index 0 as the app's current dark-off color.

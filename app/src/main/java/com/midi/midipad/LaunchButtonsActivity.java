@@ -1,9 +1,8 @@
-package de.bassapps.launchbuttonsP;
+package com.midi.midipad;
 
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -34,7 +33,7 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
-import de.bassapps.launchbuttonsP.RoundKnobButton;
+import com.midi.midipad.RoundKnobButton;
 import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -47,12 +46,9 @@ public class LaunchButtonsActivity extends Activity implements View.OnTouchListe
     Button Back;
     Button Close;
     boolean Con1;
-    Button Facebook;
-    Button Geoteach;
     Button Quit;
     TableLayout TLayout;
     Button Usb;
-    Button Youtube;
     ImageButton bb;
     Button but1;
     Button but2;
@@ -63,9 +59,6 @@ public class LaunchButtonsActivity extends Activity implements View.OnTouchListe
     Button but7;
     Button but8;
     Button buta;
-    boolean fOpen;
-    Button fQuit;
-    public PopupWindow fwindo;
     Handler handler;
     int height;
     Button init;
@@ -210,11 +203,6 @@ public class LaunchButtonsActivity extends Activity implements View.OnTouchListe
         });
         TextView tv = (TextView) findViewById(R.id.TextView01);
         this.midiLogger = new MidiLogger(tv);
-        boolean firstrunn = getSharedPreferences("PREFERENCE", 0).getBoolean("firstrunn", true);
-        if (firstrunn) {
-            initiateFirstWindow();
-            getSharedPreferences("PREFERENCE", 0).edit().putBoolean("firstrunn", false).commit();
-        }
     }
 
     public void createButtons() {
@@ -393,11 +381,11 @@ public class LaunchButtonsActivity extends Activity implements View.OnTouchListe
                 ((ViewGroup.MarginLayoutParams) kek).setMargins(this.width / 100, 0, 0, 0);
                 this.knobs[x][y].setLayoutParams(kek);
                 this.knobs[x][y].SetListener(new RoundKnobButton.RoundKnobButtonListener() {
-                    @Override // de.bassapps.launchbuttonsP.RoundKnobButton.RoundKnobButtonListener
+                    @Override // com.midi.midipad.RoundKnobButton.RoundKnobButtonListener
                     public void onStateChange(boolean newstate) {
                     }
 
-                    @Override // de.bassapps.launchbuttonsP.RoundKnobButton.RoundKnobButtonListener
+                    @Override // com.midi.midipad.RoundKnobButton.RoundKnobButtonListener
                     public void onRotate(RoundKnobButton roundKnobButton, int percentage, int ID) {
                         try {
                             Log.d(TAG, String.valueOf("local" + ID));
@@ -595,34 +583,12 @@ public class LaunchButtonsActivity extends Activity implements View.OnTouchListe
         if (!down) {
             return isUiOnlyControl(v);
         }
-        if (v == this.fQuit) {
-            this.fwindo.dismiss();
-            Uri uri = Uri.parse("http://bassapps.de/connect.php");
-            startActivity(new Intent("android.intent.action.VIEW", uri));
-            this.fOpen = false;
-            return true;
-        }
         if (v == this.Usb) {
             rest();
             return true;
         }
-        if (v == this.Facebook) {
-            Uri uri2 = Uri.parse("https://www.facebook.com/BassApps");
-            startActivity(new Intent("android.intent.action.VIEW", uri2));
-            return true;
-        }
-        if (v == this.Youtube) {
-            Uri uri3 = Uri.parse("https://www.youtube.com/c/BassappsDeutschland");
-            startActivity(new Intent("android.intent.action.VIEW", uri3));
-            return true;
-        }
         if (v == this.Close) {
             this.pwindo.dismiss();
-            return true;
-        }
-        if (v == this.Geoteach) {
-            Uri uri4 = Uri.parse("http://www.bassapps.de/connect.html");
-            startActivity(new Intent("android.intent.action.VIEW", uri4));
             return true;
         }
         if (v == this.Back) {
@@ -650,12 +616,8 @@ public class LaunchButtonsActivity extends Activity implements View.OnTouchListe
     }
 
     private boolean isUiOnlyControl(View v) {
-        return v == this.fQuit
-                || v == this.Usb
-                || v == this.Facebook
-                || v == this.Youtube
+        return v == this.Usb
                 || v == this.Close
-                || v == this.Geoteach
                 || v == this.Back
                 || v == this.Quit;
     }
@@ -723,68 +685,32 @@ public class LaunchButtonsActivity extends Activity implements View.OnTouchListe
     }
 
     public void initiatePopupWindow() {
-        if (!this.fOpen) {
-            try {
-                LayoutInflater inflater = (LayoutInflater) getSystemService("layout_inflater");
-                this.pOpen = true;
-                View layout = inflater.inflate(R.layout.pop, (ViewGroup) findViewById(R.id.popup_element));
-                float w = (float) (((double) this.width) / 1.35d);
-                float h = (float) (((double) this.height) / 1.8d);
-                int wa = (int) Math.floor(w);
-                int ha = (int) Math.floor(h);
-                this.pwindo = new PopupWindow(layout, wa, ha, true);
-                this.pwindo.showAtLocation(layout, 17, 0, 0);
-                this.Geoteach = (Button) layout.findViewById(R.id.textView2);
-                this.Facebook = (Button) layout.findViewById(R.id.textFacebook);
-                this.Youtube = (Button) layout.findViewById(R.id.textYoutube);
-                this.Close = (Button) layout.findViewById(R.id.textClose);
-                this.Quit = (Button) layout.findViewById(R.id.quit);
-                this.Geoteach.setBackgroundDrawable(null);
-                this.Facebook.setBackgroundDrawable(null);
-                this.Youtube.setBackgroundDrawable(null);
-                this.Close.setBackgroundDrawable(null);
-                this.Geoteach.setPadding(0, 0, 0, 0);
-                this.Facebook.setPadding(0, 0, 0, 0);
-                this.Youtube.setPadding(0, 0, 0, 0);
-                this.Close.setPadding(0, 0, 0, 0);
-                this.Geoteach.setTag(125);
-                this.Facebook.setTag(125);
-                this.Youtube.setTag(125);
-                this.Close.setTag(-125);
-                this.Quit.setTag(121);
-                this.Geoteach.setOnTouchListener(this);
-                this.Facebook.setOnTouchListener(this);
-                this.Youtube.setOnTouchListener(this);
-                this.Close.setOnTouchListener(this);
-                this.Quit.setOnTouchListener(this);
-                this.Usb = (Button) layout.findViewById(R.id.usb);
-                this.Usb.setTag(1000);
-                this.Usb.setOnTouchListener(this);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+        if (this.pwindo != null && this.pwindo.isShowing()) {
+            return;
         }
-    }
-
-    public void initiateFirstWindow() {
-        Log.d(TAG, String.valueOf("kekekeke111"));
-        if (!this.fOpen) {
-            try {
-                LayoutInflater inflater = (LayoutInflater) getSystemService("layout_inflater");
-                this.fOpen = true;
-                View layout = inflater.inflate(R.layout.pofp, (ViewGroup) findViewById(R.id.popup_element));
-                float w = (float) (((double) this.width) / 1.35d);
-                float h = (float) (((double) this.height) / 1.8d);
-                int wa = (int) Math.floor(w);
-                int ha = (int) Math.floor(h);
-                this.fwindo = new PopupWindow(layout, wa, ha, true);
-                this.fwindo.showAtLocation(layout, 17, 0, 0);
-                this.fQuit = (Button) layout.findViewById(R.id.quit);
-                this.fQuit.setTag(69);
-                this.fQuit.setOnTouchListener(this);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+        try {
+            LayoutInflater inflater = (LayoutInflater) getSystemService("layout_inflater");
+            this.pOpen = true;
+            View layout = inflater.inflate(R.layout.pop, (ViewGroup) findViewById(R.id.popup_element));
+            float w = (float) (((double) this.width) / 1.35d);
+            float h = (float) (((double) this.height) / 1.8d);
+            int wa = (int) Math.floor(w);
+            int ha = (int) Math.floor(h);
+            this.pwindo = new PopupWindow(layout, wa, ha, true);
+            this.pwindo.showAtLocation(layout, 17, 0, 0);
+            this.Close = (Button) layout.findViewById(R.id.textClose);
+            this.Quit = (Button) layout.findViewById(R.id.quit);
+            this.Close.setBackgroundDrawable(null);
+            this.Close.setPadding(0, 0, 0, 0);
+            this.Close.setTag(-125);
+            this.Quit.setTag(121);
+            this.Close.setOnTouchListener(this);
+            this.Quit.setOnTouchListener(this);
+            this.Usb = (Button) layout.findViewById(R.id.usb);
+            this.Usb.setTag(1000);
+            this.Usb.setOnTouchListener(this);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 

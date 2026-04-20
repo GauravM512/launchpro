@@ -21,7 +21,7 @@
         android:icon="@mipmap/ic_launcher">
         <activity
             android:label="@string/app_name"
-            android:name="de.bassapps.launchbuttonsP.LaunchButtonsActivity"
+            android:name="com.midi.midipad.LaunchButtonsActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
@@ -29,7 +29,7 @@
             </intent-filter>
         </activity>
         <service
-            android:name="de.bassapps.launchbuttonsP.LaunchpadMidiDeviceService"
+            android:name="com.midi.midipad.LaunchpadMidiDeviceService"
             android:exported="true"
             android:permission="android.permission.BIND_MIDI_DEVICE_SERVICE">
             <intent-filter>

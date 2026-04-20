@@ -1,4 +1,4 @@
-package de.bassapps.launchbuttonsP;
+package com.midi.midipad;
 
 import android.content.Context;
 import android.graphics.Bitmap;
