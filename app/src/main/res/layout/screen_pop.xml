@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:id="@+id/popup_element"
+    android:background="#11ffffff"
+    android:padding="10sp"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <Button
+            android:layout_gravity="center"
+            android:id="@+id/po1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Buttons / Filters"/>
+        <Button
+            android:layout_gravity="center"
+            android:id="@+id/po2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Standart"/>
+        <Button
+            android:layout_gravity="center"
+            android:id="@+id/po3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Buttons / Browse"/>
+        <Button
+            android:layout_gravity="center"
+            android:id="@+id/po4"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Buttons / Various"/>
+        <Button
+            android:layout_gravity="center"
+            android:id="@+id/po5"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Filters / Volume"/>
+        <Button
+            android:layout_gravity="center"
+            android:id="@+id/po6"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Seqencer"/>
+        <Button
+            android:layout_gravity="center"
+            android:id="@+id/po7"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Exit App"/>
+    </LinearLayout>
+</LinearLayout>

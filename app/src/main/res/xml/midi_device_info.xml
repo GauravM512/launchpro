@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<devices>
+    <device
+        manufacturer="BassApps"
+        product="LaunchButtons"
+        version="1.0">
+        <input-port name="From Host"/>
+        <output-port name="To Host"/>
+    </device>
+</devices>
