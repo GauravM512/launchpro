@@ -105,10 +105,7 @@ public class launchButtons extends Activity implements View.OnTouchListener, Mid
     boolean[] transporttoogle = new boolean[5];
     int knob_open = 0;
     int[][] blinks = (int[][]) Array.newInstance((Class<?>) Integer.TYPE, 30, 30);
-    Sender s = new Sender();
     SenderB sBB = new SenderB();
-    SenderC sCC = new SenderC();
-    SenderD sDD = new SenderD();
     int bbb = 0;
     int alpha = -14671840;
     Drawable mask = Drawable.createFromPath("@drawable/but");

@@ -43,7 +43,6 @@ public class RoundKnobButton extends RelativeLayout implements GestureDetector.O
     Paint paint;
     Paint paint2;
     Paint paintCenter;
-    Sender s;
     Bitmap srcoff;
     Bitmap srcon;
     long startMillis;
@@ -100,7 +99,6 @@ public class RoundKnobButton extends RelativeLayout implements GestureDetector.O
         this.arcEQ = -12281345;
         this.arcColor = this.arcEQ;
         this.degree = 0;
-        this.s = new Sender();
         setBackgroundColor(10044450);
         this.contextd = context;
         this.knob_ID = id;
