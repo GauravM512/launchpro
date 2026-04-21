@@ -574,32 +574,8 @@ public class LaunchButtonsActivity extends Activity implements View.OnTouchListe
         int velocity = press ? 127 : 0;
         try {
             if (isLaunchpadGridTag(tag)) {
-                if (this.mode == 1) {
-                    // Programmer/Drum mode: Note On/Off on Channel 9 with remapped note
-                    int x = tag % 10;
-                    int row = tag / 10;
-                    int toSend = 0;
-                    if (x < 5) {
-                        toSend = x + 1 + (row * 4) + 30;
-                    } else if (x < 9) {
-                        toSend = x + 1 + (row * 4) + 58;
-                    }
-                    sendMidiB(new byte[]{-107, (byte) toSend, (byte) velocity});
-                } else if (this.mode == 5) {
-                    // Volume fader mode: CC Ch0 with fader value
-                    int vel = (tag - 11) / 10;
-                    int chn = (tag - 11) % 10;
-                    sendMidiB(new byte[]{-80, (byte) (chn + 21), (byte) Calcs.faderLookup(vel)});
-                } else if (this.mode == 6) {
-                    // Pan fader mode: CC Ch0 with pan value
-                    int vel = (tag - 11) / 10;
-                    int chn = (tag - 11) % 10;
-                    sendMidiB(new byte[]{-80, (byte) (chn + 21), (byte) Calcs.panFaderLookup(vel)});
-                } else {
-                    // Session/other modes: Note On/Off on Channel 0
-                    int status = press ? -112 : -128;
-                    sendMidiB(new byte[]{(byte) status, (byte) tag, (byte) velocity});
-                }
+                int status = press ? -112 : -128;
+                sendMidiB(new byte[]{(byte) status, (byte) tag, (byte) velocity});
                 return true;
             }
             if (isLaunchpadEdgeCcTag(tag)) {
