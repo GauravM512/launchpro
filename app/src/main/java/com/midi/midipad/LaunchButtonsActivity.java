@@ -3,7 +3,6 @@ package com.midi.midipad;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -41,28 +40,12 @@ public class LaunchButtonsActivity extends Activity implements View.OnTouchListe
     private static final String TAG_MIDI_OUT = "MIDI_OUT";
     Button Back;
     Button Close;
-    boolean Con1;
     Button Quit;
     TableLayout TLayout;
     Button Usb;
-    ImageButton bb;
-    Button but1;
-    Button but2;
-    Button but3;
-    Button but4;
-    Button but5;
-    Button but6;
-    Button but7;
-    Button but8;
-    Button buta;
-    Handler handler;
     int height;
-    Button init;
-    RoundKnobButton k1jo;
-    boolean kOpen;
     boolean knobs_built;
     public PopupWindow kwindo;
-    int laenge;
     private int lastPosition;
     View layout;
     boolean lightshow;
@@ -70,37 +53,20 @@ public class LaunchButtonsActivity extends Activity implements View.OnTouchListe
     private MidiLogger midiLogger;
     private UsbMidiBridge usbMidiBridge;
     int mode;
-    Menu optionsMenu;
-    boolean pOpen;
-    Button po1;
-    Button po2;
-    Button po3;
-    Button po4;
-    Button po5;
-    Button po6;
-    Button po7;
     public PopupWindow pwindo;
     int sends;
-    boolean session;
     Spinner spinner;
     int width;
     private int txOkCount;
     private int txFailCount;
     private byte[] myNote = {-112, 36, 0};
     ImageButton[][] but = (ImageButton[][]) Array.newInstance((Class<?>) ImageButton.class, 16, 16);
-    boolean connected = false;
     byte[] quit = new byte[3];
     boolean[] transporttoogle = new boolean[5];
     int knob_open = 0;
     int[][] blinks = (int[][]) Array.newInstance((Class<?>) Integer.TYPE, 30, 30);
     MidiSendWorker sBB = new MidiSendWorker();
-    int bbb = 0;
-    int alpha = -14671840;
-    Drawable mask = Drawable.createFromPath("@drawable/but");
-    int wait_tym = 8;
-    boolean run_run = false;
     RoundKnobButton[][] knobs = (RoundKnobButton[][]) Array.newInstance((Class<?>) RoundKnobButton.class, 8, 8);
-    private byte[] A = {-80, 48, 127};
     private final Map<String, Integer> buttonColorCache = new HashMap<>();
 
     @Override // android.app.Activity
@@ -304,11 +270,7 @@ public class LaunchButtonsActivity extends Activity implements View.OnTouchListe
                     transportTag++;
                 }
             }
-            if (y != 9) {
-                if (!small || y != 0) {
-                }
-                layout.addView(tr);
-            }
+            layout.addView(tr);
         }
         this.but[13][0].setTag(555);
         this.but[13][0].setImageResource(R.drawable.nroundmask6);
@@ -317,9 +279,6 @@ public class LaunchButtonsActivity extends Activity implements View.OnTouchListe
         this.but[10][2].setImageResource(R.drawable.roundmasktlans);
         this.but[10][3].setImageResource(R.drawable.roundmasktrans);
         if (small) {
-            Button ddd = new Button(this);
-            ddd.setVisibility(4);
-            new TableRow(this);
             for (int i2 = 0; i2 < 8; i2++) {
                 trunten.addView(this.but[11][i2], size, size);
             }
@@ -709,7 +668,6 @@ public class LaunchButtonsActivity extends Activity implements View.OnTouchListe
         }
         try {
             LayoutInflater inflater = (LayoutInflater) getSystemService("layout_inflater");
-            this.pOpen = true;
             View layout = inflater.inflate(R.layout.pop, (ViewGroup) findViewById(R.id.popup_element));
             float w = (float) (((double) this.width) / 1.35d);
             float h = (float) (((double) this.height) / 1.8d);
@@ -808,9 +766,6 @@ public class LaunchButtonsActivity extends Activity implements View.OnTouchListe
         Message msg = Message.obtain();
         Bundle b = new Bundle();
         b.putByteArray("MIDI", data);
-        byte[] bArr = new byte[data.length];
-        for (int i = 0; i < data.length; i++) {
-        }
         if (data.length >= 6 && data[0] == -16 && data[1] == 126 && data[2] == 127 && data[3] == 6 && data[4] == 1 && data[5] == -9) {
             Log.d(TAG, String.valueOf("REQUEST"));
             Log.d(TAG, String.valueOf("REQUEST"));
@@ -984,10 +939,6 @@ public class LaunchButtonsActivity extends Activity implements View.OnTouchListe
         }
     }
 
-    int Color(int vel) {
-        return -7859798;
-    }
-
     private void applyDirectLightFeedback(int status, int noteOrCc, int value) {
         int hi = status & 240;
         int x = noteOrCc % 10;
@@ -1049,8 +1000,6 @@ public class LaunchButtonsActivity extends Activity implements View.OnTouchListe
         int x = n % 10;
         int y = 8 - (n / 10);
         if (this.mode == 1) {
-            if (hi == 176 || s != 181) {
-            }
             if (n > 35 && n < 68) {
                 int n2 = n - 36;
                 x = (n2 % 4) + 1;
