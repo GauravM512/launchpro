@@ -2,10 +2,8 @@ package com.midi.midipad;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -32,7 +30,6 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
-import com.midi.midipad.RoundKnobButton;
 import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -105,17 +102,6 @@ public class LaunchButtonsActivity extends Activity implements View.OnTouchListe
     RoundKnobButton[][] knobs = (RoundKnobButton[][]) Array.newInstance((Class<?>) RoundKnobButton.class, 8, 8);
     private byte[] A = {-80, 48, 127};
     private final Map<String, Integer> buttonColorCache = new HashMap<>();
-    private final LaunchpadMidiDeviceService.MidiEventListener serviceMidiListener = new LaunchpadMidiDeviceService.MidiEventListener() {
-        @Override
-        public void onMidiPacket(final byte[] data, final long timestamp) {
-            LaunchButtonsActivity.this.mHandler.post(new Runnable() {
-                @Override
-                public void run() {
-                    LaunchButtonsActivity.this.onMidiPacket(data, timestamp);
-                }
-            });
-        }
-    };
 
     @Override // android.app.Activity
     public void onCreate(Bundle savedInstanceState) {
@@ -135,7 +121,6 @@ public class LaunchButtonsActivity extends Activity implements View.OnTouchListe
         TextView tv = (TextView) findViewById(R.id.textView01);
         this.midiLogger = new MidiLogger(tv);
         tv.setVisibility(8);
-        LaunchpadMidiDeviceService.setMidiEventListener(this.serviceMidiListener);
         midiSystemLoad(this);
         getWindow().addFlags(128);
         createButtons();
@@ -629,16 +614,49 @@ public class LaunchButtonsActivity extends Activity implements View.OnTouchListe
         }
         int velocity = press ? 127 : 0;
         try {
-            if (isLaunchpadEdgeCcTag(tag)) {
-                sendMidiB(new byte[]{-80, (byte) tag, (byte) velocity});
-                return true;
-            }
-            
             if (isLaunchpadGridTag(tag)) {
-                sendMidiB(new byte[]{(byte) (press ? 144 : 128), (byte) tag, (byte) velocity});
+                if (this.mode == 1) {
+                    // Programmer/Drum mode: Note On/Off on Channel 9 with remapped note
+                    int x = tag % 10;
+                    int row = tag / 10;
+                    int toSend = 0;
+                    if (x < 5) {
+                        toSend = x + 1 + (row * 4) + 30;
+                    } else if (x < 9) {
+                        toSend = x + 1 + (row * 4) + 58;
+                    }
+                    sendMidiB(new byte[]{-107, (byte) toSend, (byte) velocity});
+                } else if (this.mode == 5) {
+                    // Volume fader mode: CC Ch0 with fader value
+                    int vel = (tag - 11) / 10;
+                    int chn = (tag - 11) % 10;
+                    sendMidiB(new byte[]{-80, (byte) (chn + 21), (byte) Calcs.faderLookup(vel)});
+                } else if (this.mode == 6) {
+                    // Pan fader mode: CC Ch0 with pan value
+                    int vel = (tag - 11) / 10;
+                    int chn = (tag - 11) % 10;
+                    sendMidiB(new byte[]{-80, (byte) (chn + 21), (byte) Calcs.panFaderLookup(vel)});
+                } else {
+                    // Session/other modes: Note On/Off on Channel 0
+                    int status = press ? -112 : -128;
+                    sendMidiB(new byte[]{(byte) status, (byte) tag, (byte) velocity});
+                }
                 return true;
             }
-            
+            if (isLaunchpadEdgeCcTag(tag)) {
+                if (this.mode == 1) {
+                    // Programmer/Drum mode: CC on Channel 9
+                    if (tag % 10 == 9) {
+                        sendMidiB(new byte[]{-107, (byte) (109 - (tag / 9)), (byte) velocity});
+                    } else {
+                        sendMidiB(new byte[]{-69, (byte) tag, (byte) velocity});
+                    }
+                } else {
+                    // Session/other modes: CC on Channel 0
+                    sendMidiB(new byte[]{-80, (byte) tag, (byte) velocity});
+                }
+                return true;
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -717,7 +735,6 @@ public class LaunchButtonsActivity extends Activity implements View.OnTouchListe
 
     @Override // android.app.Activity
     public void onDestroy() {
-        LaunchpadMidiDeviceService.setMidiEventListener(null);
         super.onDestroy();
         if (this.usbMidiBridge != null) {
             this.usbMidiBridge.close();
@@ -727,7 +744,6 @@ public class LaunchButtonsActivity extends Activity implements View.OnTouchListe
     @Override // android.app.Activity
     protected void onResume() {
         super.onResume();
-        LaunchpadMidiDeviceService.setMidiEventListener(this.serviceMidiListener);
         if (this.usbMidiBridge != null && this.usbMidiBridge.isSupported()) {
             this.mHandler.postDelayed(new Runnable() {
                 @Override
@@ -1233,17 +1249,6 @@ public class LaunchButtonsActivity extends Activity implements View.OnTouchListe
         if (!isSendableMidi(data)) {
             return;
         }
-        boolean serviceReady = LaunchpadMidiDeviceService.isOutputReady();
-        if (serviceReady) {
-            if (LaunchpadMidiDeviceService.sendMidi(data)) {
-                Log.d(TAG_MIDI_OUT, "tx via service bytes=" + bytesToHex(data));
-                onTxResult(true, null);
-                return;
-            }
-            Log.w(TAG_MIDI_OUT, "service output was ready but send failed");
-        } else {
-            Log.w(TAG_MIDI_OUT, "service output not ready; host/DAW may not have opened output port yet");
-        }
 
         if (this.usbMidiBridge != null && this.usbMidiBridge.isSupported()) {
             try {
@@ -1370,8 +1375,7 @@ public class LaunchButtonsActivity extends Activity implements View.OnTouchListe
         if (!connected || this.usbMidiBridge == null) {
             return "MIDI open failed";
         }
-        boolean serviceTxReady = LaunchpadMidiDeviceService.isOutputReady();
-        boolean tx = this.usbMidiBridge.canSend() || serviceTxReady;
+        boolean tx = this.usbMidiBridge.canSend();
         boolean rx = this.usbMidiBridge.canReceive();
         if (!tx) {
             return "MIDI open failed (no Output endpoint)";
